@@ -1447,6 +1447,26 @@ class SaeTClientV2
 
 		return $this->oauth->get( 'users/show', $params );
 	}
+	
+	
+      /**
+       * 根据长链接获取短链
+       *
+       * 根据长链接获取短链返地址。
+       * <br />对应API：{@link http://open.weibo.com/wiki/2/short_url/shorten}
+       * 
+       * @access public
+       * @param string  $url  长链接地址。
+       * @return array
+       */
+       function get_short_url( $url )
+       {
+           	$params=array();
+        	if ( $url !== NULL ) {
+            		$params['url_long'] = $url;
+        	}
+		return $this->oauth->get( 'short_url/shorten', $params);
+	}
 
 	/**
 	 * 通过个性化域名获取用户资料以及用户最新的一条微博
