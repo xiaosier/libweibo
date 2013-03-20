@@ -448,7 +448,7 @@ class SaeTOAuthV2 {
 
 			if( in_array($parameter, array('pic', 'image')) && $value{0} == '@' ) {
 				$url = ltrim( $value, '@' );
-				$content = curl_get_file_contents( $url );
+				$content = self::curl_get_file_contents( $url );
 				$array = explode( '?', basename( $url ) );
 				$filename = $array[0];
 
@@ -471,22 +471,22 @@ class SaeTOAuthV2 {
 	/**
 	 * @ignore
 	 */
-	public function curl_get_file_contents($durl) {
-       $ch = curl_init($durl);
-       $options = array(
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_FOLLOWLOCATION => true,     // redirects
-            CURLOPT_USERAGENT      => "Sina App Engine",
-            CURLOPT_AUTOREFERER    => true,
-            CURLOPT_CONNECTTIMEOUT => 120,
-            CURLOPT_TIMEOUT        => 120,
-            CURLOPT_MAXREDIRS      => 10,
-        );
-       curl_setopt_array( $ch, $options );
-       $r = curl_exec($ch);
-       curl_close($ch);
-       return $r;
-     }
+	public static function curl_get_file_contents($durl) {
+		$ch = curl_init($durl);
+		$options = array(
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_FOLLOWLOCATION => true,     // redirects
+			CURLOPT_USERAGENT      => "Sina App Engine",
+			CURLOPT_AUTOREFERER    => true,
+			CURLOPT_CONNECTTIMEOUT => 120,
+			CURLOPT_TIMEOUT        => 120,
+			CURLOPT_MAXREDIRS      => 10,
+		);
+		curl_setopt_array( $ch, $options );
+		$r = curl_exec($ch);
+		curl_close($ch);
+		return $r;
+	}
 }
 
 
