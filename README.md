@@ -3,7 +3,7 @@
 
 用于新浪微博开放平台的PHP SDK. 内含能直接使用的DEMO.
 
-SAE(Sina App Engine, http://sae.sina.com.cn )已内置SDK，不需要下载
+SAE(Sina App Engine, http://sae.sina.com.cn )已内置SDK，不需要下载，使用前需要手工调用 require_once('saetv2.ex.class.php');
 
 
 更新
@@ -67,7 +67,7 @@ Authors
 -------
 
 + http://weibo.com/lazypeople
-+ http://skirt.sinaapp.com
++ http://lazy.changes.com.cn
 
 
 License
