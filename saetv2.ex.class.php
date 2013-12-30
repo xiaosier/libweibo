@@ -354,7 +354,11 @@ class SaeTOAuthV2 {
 		curl_setopt($ci, CURLOPT_RETURNTRANSFER, TRUE);
 		curl_setopt($ci, CURLOPT_ENCODING, "");
 		curl_setopt($ci, CURLOPT_SSL_VERIFYPEER, $this->ssl_verifypeer);
-		curl_setopt($ci, CURLOPT_SSL_VERIFYHOST, 1);
+		if (version_compare(phpversion(), '5.4.0', '<')) {
+			curl_setopt($ci, CURLOPT_SSL_VERIFYHOST, 1);
+		} else {
+			curl_setopt($ci, CURLOPT_SSL_VERIFYHOST, 2);
+		}
 		curl_setopt($ci, CURLOPT_HEADERFUNCTION, array($this, 'getHeader'));
 		curl_setopt($ci, CURLOPT_HEADER, FALSE);
 
