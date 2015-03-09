@@ -2501,7 +2501,7 @@ class SaeTClientV2
 		$params = array();
 		$params['image'] = "@{$image_path}";
 
-		return $this->oauth->post('account/avatar/upload', $params);
+		return $this->oauth->post('account/avatar/upload', $params, true);
 	}
 
 	/**
