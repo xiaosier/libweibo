@@ -5,6 +5,9 @@
 
 SAE(Sina App Engine, http://sae.sina.com.cn )已内置SDK，不需要下载，使用前需要手工调用 require_once('saetv2.ex.class.php');
 
+composer
+-----
+composer.phar require xiaosier/libweibo:dev-master
 
 更新
 -----
