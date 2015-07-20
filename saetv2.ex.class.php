@@ -354,7 +354,11 @@ class SaeTOAuthV2 {
 		curl_setopt($ci, CURLOPT_RETURNTRANSFER, TRUE);
 		curl_setopt($ci, CURLOPT_ENCODING, "");
 		curl_setopt($ci, CURLOPT_SSL_VERIFYPEER, $this->ssl_verifypeer);
-		curl_setopt($ci, CURLOPT_SSL_VERIFYHOST, 1);
+		if (version_compare(phpversion(), '5.4.0', '<')) {
+			curl_setopt($ci, CURLOPT_SSL_VERIFYHOST, 1);
+		} else {
+			curl_setopt($ci, CURLOPT_SSL_VERIFYHOST, 2);
+		}
 		curl_setopt($ci, CURLOPT_HEADERFUNCTION, array($this, 'getHeader'));
 		curl_setopt($ci, CURLOPT_HEADER, FALSE);
 
@@ -600,7 +604,7 @@ class SaeTClientV2
 	 */
 	function friends_timeline( $page = 1, $count = 50, $since_id = 0, $max_id = 0, $base_app = 0, $feature = 0 )
 	{
-		return $this->home_timeline( $since_id, $max_id, $count, $page, $base_app, $feature);
+		return $this->home_timeline($page, $count, $since_id, $max_id, $base_app, $feature);
 	}
 
 	/**
@@ -1114,15 +1118,38 @@ class SaeTClientV2
 	 * 对应API：{@link http://open.weibo.com/wiki/2/statuses/upload_url_text statuses/upload_url_text}
 	 *
 	 * @param string $status  要发布的微博文本内容，内容不超过140个汉字。
+	 * @param int $visible    微博的可见性，0：所有人能看，1：仅自己可见，2：密友可见，3：指定分组可见，默认为0
+	 * @param string $list_id 微博的保护投递指定分组ID，只有当visible参数为3时生效且必选。
+	 * @param string $pic_id 已经上传的图片pid，多个时使用英文半角逗号符分隔，最多不超过9个。
+	 * @param float $lat 纬度，有效范围：-90.0到+90.0，+表示北纬，默认为0.0。
+	 * @param float $long 经度，有效范围：-180.0到+180.0，+表示东经，默认为0.0。
+	 * @param string $annotations 元数据，主要是为了方便第三方应用记录一些适合于自己使用的信息，每条微博可以包含一个或者多个元数据，
+	 *                            必须以json字串的形式提交，字串长度不超过512个字符，具体内容可以自定。
 	 * @param string $url    图片的URL地址，必须以http开头。
 	 * @return array
 	 */
-	function upload_url_text( $status,  $url )
+	function upload_url_text( $status,  $url , $visible=0, $list_id=NULL, $pic_id=NULL, $lat = NULL, $long=NULL, $annotations=NULL)
 	{
 		$params = array();
 		$params['status'] = $status;
 		$params['url'] = $url;
-		return $this->oauth->post( 'statuses/upload', $params, true );
+		$params['visible'] = $visible;
+		if (!is_null($list_id)) {
+			$params['list_id'] = $list_id;
+		}
+		if (!is_null($pic_id)) {
+			$params['pic_id'] = $pic_id;
+		}
+		if (!is_null($lat)) {
+			$params['lat'] = $lat;
+		}
+		if (!is_null($long)) {
+			$params['long'] = $long;
+		}
+		if (!is_null($annotations)) {
+			$params['annotations'] = $annotations;
+		}
+		return $this->oauth->post( 'statuses/upload_url_text', $params, true );
 	}
 
 
@@ -1446,26 +1473,6 @@ class SaeTClientV2
 		$params['screen_name'] = $screen_name;
 
 		return $this->oauth->get( 'users/show', $params );
-	}
-	
-	
-      /**
-       * 根据长链接获取短链
-       *
-       * 根据长链接获取短链返地址。
-       * <br />对应API：{@link http://open.weibo.com/wiki/2/short_url/shorten}
-       * 
-       * @access public
-       * @param string  $url  长链接地址。
-       * @return array
-       */
-       function get_short_url( $url )
-       {
-           	$params=array();
-        	if ( $url !== NULL ) {
-            		$params['url_long'] = $url;
-        	}
-		return $this->oauth->get( 'short_url/shorten', $params);
 	}
 
 	/**
@@ -2494,7 +2501,7 @@ class SaeTClientV2
 		$params = array();
 		$params['image'] = "@{$image_path}";
 
-		return $this->oauth->post('account/avatar/upload', $params);
+		return $this->oauth->post('account/avatar/upload', $params, true);
 	}
 
 	/**
