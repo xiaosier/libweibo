@@ -1367,7 +1367,7 @@ class SaeTClientV2
 	/**
 	 * 删除当前用户的微博评论信息。
 	 *
-	 * 注意：只能删除自己发布的评论，发部微博的用户不可以删除其他人的评论。
+	 * 注意：只能删除自己发布的评论，发布微博的用户不可以删除其他人的评论。
 	 * <br />对应API：{@link http://open.weibo.com/wiki/2/statuses/comment_destroy statuses/comment_destroy}
 	 * 
 	 * @access public
