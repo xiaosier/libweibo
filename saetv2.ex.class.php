@@ -6,12 +6,16 @@
  */
 
 /**
+ * If the class OAuthException has not been declared, extend the Exception class.
+ * This is to allow OAuth without the PECL OAuth library
+ * 
  * @ignore
  */
-class OAuthException extends Exception {
-	// pass
+if ( ! class_exists( 'OAuthException')) {
+	class OAuthException extends Exception {
+		// pass
+	}
 }
-
 
 /**
  * 新浪微博 OAuth 认证类(OAuth2)
