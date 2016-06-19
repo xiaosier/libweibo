@@ -1065,12 +1065,14 @@ class SaeTClientV2
 	 * @param float $lat 纬度，发表当前微博所在的地理位置，有效范围 -90.0到+90.0, +表示北纬。可选。
 	 * @param float $long 经度。有效范围-180.0到+180.0, +表示东经。可选。
 	 * @param mixed $annotations 可选参数。元数据，主要是为了方便第三方应用记录一些适合于自己使用的信息。每条微博可以包含一个或者多个元数据。请以json字串的形式提交，字串长度不超过512个字符，或者数组方式，要求json_encode后字串长度不超过512个字符。具体内容可以自定。例如：'[{"type2":123}, {"a":"b", "c":"d"}]'或array(array("type2"=>123), array("a"=>"b", "c"=>"d"))。
+	 * @param int $visible    微博的可见性，0：所有人能看，1：仅自己可见，2：密友可见，3：指定分组可见，默认为0
 	 * @return array
 	 */
-	function update( $status, $lat = NULL, $long = NULL, $annotations = NULL )
+	function update( $status, $lat = NULL, $long = NULL, $annotations = NULL, $visible=0 )
 	{
 		$params = array();
 		$params['status'] = $status;
+		$params['visible'] = $visible;
 		if ($lat) {
 			$params['lat'] = floatval($lat);
 		}
