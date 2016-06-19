@@ -1098,13 +1098,15 @@ class SaeTClientV2
 	 * @param string $pic_path 要发布的图片路径, 支持url。[只支持png/jpg/gif三种格式, 增加格式请修改get_image_mime方法]
 	 * @param float $lat 纬度，发表当前微博所在的地理位置，有效范围 -90.0到+90.0, +表示北纬。可选。
 	 * @param float $long 可选参数，经度。有效范围-180.0到+180.0, +表示东经。可选。
+	 * @param int $visible    微博的可见性，0：所有人能看，1：仅自己可见，2：密友可见，3：指定分组可见，默认为0
 	 * @return array
 	 */
-	function upload( $status, $pic_path, $lat = NULL, $long = NULL )
+	function upload( $status, $pic_path, $lat = NULL, $long = NULL, $visible=0 )
 	{
 		$params = array();
 		$params['status'] = $status;
 		$params['pic'] = '@'.$pic_path;
+		$params['visible'] = $visible;
 		if ($lat) {
 			$params['lat'] = floatval($lat);
 		}
@@ -1114,7 +1116,6 @@ class SaeTClientV2
 
 		return $this->oauth->post( 'statuses/upload', $params, true );
 	}
-
 
 	/**
 	 * 指定一个图片URL地址抓取后上传并同时发布一条新微博
