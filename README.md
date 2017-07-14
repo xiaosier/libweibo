@@ -9,9 +9,26 @@ composer
 -----
 composer.phar require xiaosier/libweibo:dev-master
 
+微博写入接口说明
+-----
+由于微博开放平台调整，写入接口需要都切换到share分享接口，说明在 http://open.weibo.com/blog/%E3%80%90%E5%B9%B3%E5%8F%B0%E5%85%AC%E5%91%8A%E3%80%91%E5%BE%AE%E5%8D%9A%E5%BC%80%E6%94%BE%E5%B9%B3%E5%8F%B0%E5%88%86%E4%BA%AB%E5%88%B0%E5%BE%AE%E5%8D%9A%E6%8E%A5%E5%8F%A3%E5%8D%87%E7%BA%A7%E5%85%AC 这里。
+调用时需要使用$instance->share($status, $pic); 方法，示例：
+
+```
+$c = new SaeTClientV2( WB_AKEY , WB_SKEY , WB_ACCESSTOKEN );
+// 待发送的文字内容
+$status = '发送的文字内容';
+// 本地一张图片，也可以不带图片
+$file_local = '5486087cly1fhh2yaksr1j20j60srtd0.jpg';
+// 拼接'http://weibosdk.sinaapp.com/'是因为这个share接口至少要带上一个【安全域名】下的链接。
+$ret = $c->share($status.'http://weibosdk.sinaapp.com/', $file_local);
+var_dump($ret);
+```
+
 更新
 -----
 
++ 2017年7月14日 增加分享接口
 + 2013年2月20日 修改V2版一处notice
 + 2011年12月16日 修改V2版两处手误
 + 2011年10月21日 发布V2版PHP SDK，基于 http://open.weibo.com/wiki/API%E6%96%87%E6%A1%A3_V2 中的最新接口封装。
