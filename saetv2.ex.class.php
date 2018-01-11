@@ -172,14 +172,14 @@ class SaeTOAuthV2 {
 	 *
 	 * 对应API：{@link http://open.weibo.com/wiki/OAuth2/access_token OAuth2/access_token}
 	 *
-	 * @param string $type 请求的类型,可以为:code, password, token
 	 * @param array $keys 其他参数：
 	 *  - 当$type为code时： array('code'=>..., 'redirect_uri'=>...)
 	 *  - 当$type为password时： array('username'=>..., 'password'=>...)
 	 *  - 当$type为token时： array('refresh_token'=>...)
-	 * @return array
+     * @param string $type 请求的类型,可以为:code, password, token
+     * @return array
 	 */
-	function getAccessToken( $type = 'code', $keys ) {
+	function getAccessToken($keys,$type = 'code' ) {
 		$params = array();
 		$params['client_id'] = $this->client_id;
 		$params['client_secret'] = $this->client_secret;
