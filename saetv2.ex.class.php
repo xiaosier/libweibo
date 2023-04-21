@@ -116,8 +116,12 @@ class SaeTOAuthV2 {
 	 * @ignore
 	 */
 	public static $boundary = '';
+    /**
+     * @var string
+     */
+    public $remote_ip;
 
-	/**
+    /**
 	 * Set API URLS
 	 */
 	/**
@@ -155,8 +159,8 @@ class SaeTOAuthV2 {
 	 *  - wap2.0		wap2.0页面		
 	 *  - js			js-sdk 专用 授权页面是弹窗，返回结果为js-sdk回掉函数		
 	 *  - apponweibo	站内应用专用,站内应用不传display参数,并且response_type为token时,默认使用改display.授权后不会返回access_token，只是输出js刷新站内应用父框架
-	 * @return array
-	 */
+	 * @return string
+     */
 	function getAuthorizeURL( $url, $response_type = 'code', $state = NULL, $display = NULL ) {
 		$params = array();
 		$params['client_id'] = $this->client_id;
@@ -167,18 +171,19 @@ class SaeTOAuthV2 {
 		return $this->authorizeURL() . "?" . http_build_query($params);
 	}
 
-	/**
-	 * access_token接口
-	 *
-	 * 对应API：{@link http://open.weibo.com/wiki/OAuth2/access_token OAuth2/access_token}
-	 *
-	 * @param string $type 请求的类型,可以为:code, password, token
-	 * @param array $keys 其他参数：
-	 *  - 当$type为code时： array('code'=>..., 'redirect_uri'=>...)
-	 *  - 当$type为password时： array('username'=>..., 'password'=>...)
-	 *  - 当$type为token时： array('refresh_token'=>...)
-	 * @return array
-	 */
+    /**
+     * access_token接口
+     *
+     * 对应API：{@link http://open.weibo.com/wiki/OAuth2/access_token OAuth2/access_token}
+     *
+     * @param string $type 请求的类型,可以为:code, password, token
+     * @param array $keys 其他参数：
+     *  - 当$type为code时： array('code'=>..., 'redirect_uri'=>...)
+     *  - 当$type为password时： array('username'=>..., 'password'=>...)
+     *  - 当$type为token时： array('refresh_token'=>...)
+     * @return array
+     * @throws OAuthException
+     */
 	function getAccessToken( $type = 'code', $keys ) {
 		$params = array();
 		$params['client_id'] = $this->client_id;
@@ -235,7 +240,7 @@ class SaeTOAuthV2 {
 	/**
 	 * 读取jssdk授权信息，用于和jssdk的同步登录
 	 *
-	 * @return array 成功返回array('access_token'=>'value', 'refresh_token'=>'value'); 失败返回false
+	 * @return array|false 成功返回array('access_token'=>'value', 'refresh_token'=>'value'); 失败返回false
 	 */
 	function getTokenFromJSSDK() {
 		$key = "weibojs_" . $this->client_id;
@@ -258,7 +263,7 @@ class SaeTOAuthV2 {
 	 * 常用于从Session或Cookie中读取token，或通过Session/Cookie中是否存有token判断登录状态。
 	 *
 	 * @param array $arr 存有access_token和secret_token的数组
-	 * @return array 成功返回array('access_token'=>'value', 'refresh_token'=>'value'); 失败返回false
+	 * @return array|false 成功返回array('access_token'=>'value', 'refresh_token'=>'value'); 失败返回false
 	 */
 	function getTokenFromArray( $arr ) {
 		if (isset($arr['access_token']) && $arr['access_token']) {
@@ -445,12 +450,10 @@ class SaeTOAuthV2 {
 
 		uksort($params, 'strcmp');
 
-		$pairs = array();
-
-		self::$boundary = $boundary = uniqid('------------------');
-		$MPboundary = '--'.$boundary;
-		$endMPboundary = $MPboundary. '--';
-		$multipartbody = '';
+        self::$boundary = $boundary = uniqid('------------------');
+		$MBoundary = '--'.$boundary;
+		$endMBoundary = $MBoundary. '--';
+		$multiparty = '';
 
 		foreach ($params as $parameter => $value) {
 
@@ -460,20 +463,20 @@ class SaeTOAuthV2 {
 				$array = explode( '?', basename( $url ) );
 				$filename = $array[0];
 
-				$multipartbody .= $MPboundary . "\r\n";
-				$multipartbody .= 'Content-Disposition: form-data; name="' . $parameter . '"; filename="' . $filename . '"'. "\r\n";
-				$multipartbody .= "Content-Type: image/unknown\r\n\r\n";
-				$multipartbody .= $content. "\r\n";
+				$multiparty .= $MBoundary . "\r\n";
+				$multiparty .= 'Content-Disposition: form-data; name="' . $parameter . '"; filename="' . $filename . '"'. "\r\n";
+				$multiparty .= "Content-Type: image/unknown\r\n\r\n";
+				$multiparty .= $content. "\r\n";
 			} else {
-				$multipartbody .= $MPboundary . "\r\n";
-				$multipartbody .= 'content-disposition: form-data; name="' . $parameter . "\"\r\n\r\n";
-				$multipartbody .= $value."\r\n";
+				$multiparty .= $MBoundary . "\r\n";
+				$multiparty .= 'content-disposition: form-data; name="' . $parameter . "\"\r\n\r\n";
+				$multiparty .= $value."\r\n";
 			}
 
 		}
 
-		$multipartbody .= $endMPboundary;
-		return $multipartbody;
+		$multiparty .= $endMBoundary;
+		return $multiparty;
 	}
 }
 
@@ -489,7 +492,12 @@ class SaeTOAuthV2 {
  */
 class SaeTClientV2
 {
-	/**
+    /**
+     * @var SaeTOAuthV2
+     */
+    private $oauth;
+
+    /**
 	 * 构造函数
 	 * 
 	 * @access public
