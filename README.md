@@ -1,20 +1,20 @@
-
-=================
-
+## 说明
 用于新浪微博开放平台的PHP SDK. 内含能直接使用的DEMO.
 
-SAE(Sina App Engine, http://sae.sina.com.cn )已内置SDK，不需要下载，使用前需要手工调用 require_once('saetv2.ex.class.php');
+SAE(Sina App Engine, http://www.sinacloud.com )已内置SDK，不需要下载，使用前需要手工调用 require_once('saetv2.ex.class.php');
 
 composer
 -----
+```php
 composer.phar require xiaosier/libweibo:dev-master
+```
 
 微博写入接口说明
 -----
 由于微博开放平台调整，写入接口需要都切换到share分享接口，说明在 http://open.weibo.com/blog/%E3%80%90%E5%B9%B3%E5%8F%B0%E5%85%AC%E5%91%8A%E3%80%91%E5%BE%AE%E5%8D%9A%E5%BC%80%E6%94%BE%E5%B9%B3%E5%8F%B0%E5%88%86%E4%BA%AB%E5%88%B0%E5%BE%AE%E5%8D%9A%E6%8E%A5%E5%8F%A3%E5%8D%87%E7%BA%A7%E5%85%AC 这里。
 调用时需要使用$instance->share($status, $pic); 方法，示例：
 
-```
+```php
 $c = new SaeTClientV2( WB_AKEY , WB_SKEY , WB_ACCESSTOKEN );
 // 待发送的文字内容
 $status = '发送的文字内容';
@@ -87,7 +87,6 @@ Authors
 -------
 
 + http://weibo.com/lazypeople
-+ http://lazy.changes.com.cn
 
 
 License
